@@ -3,35 +3,114 @@
   <head>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="src/main.css" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"
+      integrity="sha384-q2kxQ16AaE6UbzuKqyBE9/u/KzioAlnx2maXQHiDX9d4/zp8Ok3f+M7DPm+Ib6IU"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.min.js"
+      integrity="sha384-pQQkAEnwaBkjpqZ8RU1fF1AKtTcHJwFl3pblpTlHXybJjHpMYo79HY3hIi4NKxyj"
+      crossorigin="anonymous"
+    ></script>
     <title>Simon Dice</title>
   </head>
   <body>
-    <div class="gameboard">
-      <div id="celeste" class="color celeste left" data-color="celeste"></div>
-      <div id="violeta" class="color violeta right" data-color="violeta"></div>
-      <div id="naranja" class="color naranja left" data-color="naranja"></div>
-      <div id="verde" class="color verde right" data-color="verde"></div>
-      <button id="btnEmpezar" class="btn-start" onclick="empezarJuego()">
-        Empezar a jugar!
-      </button>
+    <nav class="navbar navbar-dark bg-dark fixed-top">
+      <a class="navbar-brand" href="#">
+        <img
+          src="src/badge.png"
+          width="30"
+          height="30"
+          class="d-inline-block align-top"
+          alt=""
+          style="border-radius: 50%; margin-left: 16px; margin-right: 8px"
+        />
+        Escuela de JavaScript Platzi
+      </a>
+    </nav>
+    <div style="position: absolute; z-index: 99; margin: auto; width: 100vw">
+      <div class="gameboard">
+        <div id="celeste" class="color celeste left" data-color="celeste"></div>
+        <div
+          id="violeta"
+          class="color violeta right"
+          data-color="violeta"
+        ></div>
+        <div id="naranja" class="color naranja left" data-color="naranja"></div>
+        <div id="verde" class="color verde right" data-color="verde"></div>
+        <button id="btnEmpezar" class="btn-start" onclick="empezarJuego()">
+          Empezar a jugar
+        </button>
+      </div>
     </div>
+    <div class="waveWrapper waveAnimation">
+      <div class="waveWrapperInner bgTop">
+        <div
+          class="wave waveTop"
+          style="
+            background-image: url('http://front-end-noobs.com/jecko/img/wave-top.png');
+          "
+        ></div>
+      </div>
+      <div class="waveWrapperInner bgMiddle">
+        <div
+          class="wave waveMiddle"
+          style="
+            background-image: url('http://front-end-noobs.com/jecko/img/wave-mid.png');
+          "
+        ></div>
+      </div>
+      <div class="waveWrapperInner bgBottom">
+        <div
+          class="wave waveBottom"
+          style="
+            background-image: url('http://front-end-noobs.com/jecko/img/wave-bot.png');
+          "
+        ></div>
+      </div>
+    </div>
+    <div class="github-logo">
+      <a href="https://github.com/davidnherran" target="_blank"
+        ><img src="src/github.png" width="30" alt="" />&nbsp; @davidnherran</a
+      >
+    </div>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"
+      integrity="sha512-AA1Bzp5Q0K1KanKKmvN/4d3IRKVlv9PYgwFPvm32nPO6QS8yH1HO7LbgB1pgiOxPtfeg5zEn2ba64MUcqJx6CA=="
+      crossorigin="anonymous"
+    ></script>
     <script>
       const celeste = document.getElementById("celeste");
       const violeta = document.getElementById("violeta");
       const naranja = document.getElementById("naranja");
       const verde = document.getElementById("verde");
       const btnEmpezar = document.getElementById("btnEmpezar");
+      const ULTIMO_NIVEL = 10;
 
       class Juego {
         constructor() {
+          this.inicializar = this.inicializar.bind(this);
           this.inicializar();
           this.generarSecuencia();
-          this.siguienteNivel();
+          setTimeout(this.siguienteNivel, 500);
         }
 
         inicializar() {
+          this.siguienteNivel = this.siguienteNivel.bind(this);
           this.elegirColor = this.elegirColor.bind(this);
-          btnEmpezar.classList.add("hide");
+          this.toggleBtnInicializar();
           this.nivel = 1;
           this.colores = {
             celeste,
@@ -41,13 +120,22 @@
           };
         }
 
+        toggleBtnInicializar() {
+          if (btnEmpezar.classList.contains("hide")) {
+            btnEmpezar.classList.remove("hide");
+          } else {
+            btnEmpezar.classList.add("hide");
+          }
+        }
+
         generarSecuencia() {
-          this.secuencia = new Array(10)
+          this.secuencia = new Array(ULTIMO_NIVEL)
             .fill(0)
             .map((n) => Math.floor(Math.random() * 4));
         }
 
         siguienteNivel() {
+          this.subnivel = 0;
           this.iluminarSecuencia();
           this.agregarEventosClick();
         }
@@ -62,6 +150,19 @@
               return "naranja";
             case 3:
               return "verde";
+          }
+        }
+
+        deColorANumero(color) {
+          switch (color) {
+            case "celeste":
+              return 0;
+            case "violeta":
+              return 1;
+            case "naranja":
+              return 2;
+            case "verde":
+              return 3;
           }
         }
 
@@ -86,28 +187,78 @@
         }
 
         agregarEventosClick() {
-          this.colores.celeste.addEventListener(
-            "click",
-            this.elegirColor
-          );
-          this.colores.violeta.addEventListener(
-            "click",
-            this.elegirColor
-          );
-          this.colores.naranja.addEventListener(
-            "click",
-            this.elegirColor
-          );
-          this.colores.verde.addEventListener(
-            "click",
-            this.elegirColor
-          );
+          this.colores.celeste.addEventListener("click", this.elegirColor);
+          this.colores.violeta.addEventListener("click", this.elegirColor);
+          this.colores.naranja.addEventListener("click", this.elegirColor);
+          this.colores.verde.addEventListener("click", this.elegirColor);
         }
 
-        elegirColor(e) {
-          console.log(e)
+        eliminarEventosClick() {
+          this.colores.celeste.removeEventListener("click", this.elegirColor);
+          this.colores.violeta.removeEventListener("click", this.elegirColor);
+          this.colores.naranja.removeEventListener("click", this.elegirColor);
+          this.colores.verde.removeEventListener("click", this.elegirColor);
         }
 
+        elegirColor(ev) {
+          const nombreColor = ev.target.dataset.color;
+          const numeroColor = this.deColorANumero(nombreColor);
+          this.iluminarColor(nombreColor);
+          if (numeroColor === this.secuencia[this.subnivel]) {
+            this.subnivel++;
+
+            if (this.subnivel === this.nivel) {
+              this.nivel++;
+
+              this.eliminarEventosClick();
+              if (this.nivel === ULTIMO_NIVEL + 1) {
+                this.ganoElJuego();
+              } else {
+                setTimeout(this.siguienteNivel, 1500);
+              }
+            }
+          } else {
+            this.perdioElJuego();
+          }
+        }
+
+        ganoElJuego() {
+          swal({
+            title: "Felicitaciones, ganaste!",
+            text: "https://github.com/davidnherran/platzi-simon-dice",
+            content: {
+              element: "img",
+              attributes: {
+                src: "src/success.png",
+                alt: "image",
+                width: 300,
+              },
+            },
+            button: {
+              text: "Jugar de nuevo",
+            },
+          }).then(this.inicializar);
+        }
+
+        perdioElJuego() {
+          swal({
+            title: "Perdiste",
+            content: {
+              element: "img",
+              attributes: {
+                src: "src/gameover.png",
+                alt: "image",
+                width: 300,
+              },
+            },
+            button: {
+              text: "Jugar de nuevo",
+            },
+          }).then(() => {
+            this.eliminarEventosClick();
+            this.inicializar();
+          });
+        }
       }
 
       function empezarJuego() {

@@ -47,7 +47,7 @@
     </nav>
 
     <div class="card card__score" style="position: absolute; top: 0; right: 0">
-      <div>Nivel: <span id="contador">1</span> / 18</div>
+      <div>Nivel: <span id="contador">1</span> / 10</div>
       <div>Puntuacion: <span id="score">0</span></div>
     </div>
 
@@ -113,7 +113,7 @@
       const contador = document.getElementById("contador");
       const score = document.getElementById("score");
       const btnEmpezar = document.getElementById("btnEmpezar");
-      const ULTIMO_NIVEL = 18;
+      const ULTIMO_NIVEL = 10;
 
       class Juego {
         constructor() {
@@ -228,7 +228,7 @@
               console.log(this.nivel);
 
               contador.innerHTML = this.nivel;
-              score.innerHTML = this.nivel * 8;
+              score.innerHTML = this.nivel * 10;
 
               this.eliminarEventosClick();
               if (this.nivel === ULTIMO_NIVEL + 1) {
@@ -244,8 +244,8 @@
 
         ganoElJuego() {
           swal({
-            title: "Felicitaciones, ganaste!",
-            text: "https://github.com/davidnherran/platzi-simon-dice",
+            title: "Ganaste!",
+            text: `Puntuación final ${this.nivel * 10}`,
             content: {
               element: "img",
               attributes: {
